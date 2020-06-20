@@ -1,6 +1,5 @@
 # pycharm
-*/.idea/
-.DS_Store
+.idea/
 
 __pycache__/
 *.py[cod]
