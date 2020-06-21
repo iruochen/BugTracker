@@ -121,9 +121,20 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# 自己的短信模板
-SMS = 0
+
+# --------- sms -----------
+# 腾讯云短信应用的 app_id
+TENCENT_SMS_APP_ID = 6666
+# 腾讯云短信应用的 app_key
+TENCENT_SMS_APP_KEY = '6666'
+# 腾讯云短信签名内容
+TENCENT_SMS_SIGN = '小小猿若尘'
+# 短信模板
+TENCENT_SMS_TEMPLATE = {
+    'register': 642159,
+    'login': 642160,
+}
 try:
-    from .loacl_settings import *
+    from .local_settings import *
 except ImportError:
     pass
