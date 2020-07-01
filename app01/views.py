@@ -58,4 +58,4 @@ class RegisterModelForm(forms.ModelForm):
 
 def register(request):
     form = RegisterModelForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'app01/register.html', {'form': form})
