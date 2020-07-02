@@ -5,13 +5,20 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <style>
+        .error-msg {
+            color: red;
+            position: absolute;
+            font-size: 13px;
+        }
+    </style>
 {% endblock %}
 
 
 {% block content %}
     <div class="account">
         <div class="title">用户注册</div>
-        <form id="form" method="post" novalidate>
+        <form id="form" method="POST" novalidate>
             {% csrf_token %}
             {% for field in form %}
                 {% if field.name == 'code' %}
@@ -20,18 +27,18 @@
                         <div class="row">
                             <div class="col-xs-7">
                                 {{ field }}
-                                <span class="error-msg">{{ field.errors.0 }}</span>
+                                <span class="error-msg"></span>
                             </div>
                             <div class="col-xs-5">
-                                <input id="smsBtn" type="button" class="btn btn-default" value="点击获取验证码"/>
+                                <input id="btnSms" type="button" class="btn btn-default" value="点击获取验证码">
                             </div>
                         </div>
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.lable }}</label>
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {{ field }}
-                        <span class="error-msg">{{ field.errors.0 }}</span>
+                        <span class="error-msg"></span>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -43,10 +50,69 @@
             </div>
         </form>
     </div>
-
 {% endblock %}
 
 
 {% block js %}
+    <script>
+        // 页面框架加载完成之后自动执行函数
+        $(function () {
+
+            bindClickBtnSms();
+        });
+
+        /*
+        点击获取验证码的按钮绑定事件
+         */
+        function bindClickBtnSms() {
+            $('#btnSms').click(function () {
+
+                $('.error-msg').empty();
+
+                // 获取用户输入的手机号
+                // 找到输入框的ID，根据ID获取值，如何找到手机号的ID？
+                // Django ModelForm 默认生成字段ID为 “id_ + 字段名”
+                var mobilePhone = $('#id_mobile_phone').val();
+
+                // 发送ajax 请求，把手机号发送过去
+                $.ajax({
+                    url: "{% url 'send_sms' %}",  // 等价于 /send/sms/
+                    type: "GET",
+                    data: {mobile_phone: mobilePhone, tpl: "register"},  // 手机号和注册的模板
+                    dataType: "JSON",  // 将服务端返回的数据反序列化为字典
+                    success: function (res) {
+                        // ajax请求发送成功之后，自动执行的函数： res就是后端返回的值
+                        if(res.status) {
+                            sendSmsRemind();
+                        } else {
+                            // 错误信息
+                            // console.log(res);  // {status: False, error: { mobile_phone: ["错误信息", ] }
+                            $.each(res.error, function (key, value) {
+                                $("#id_" + key).next().text(value[0]);
+                            })
+                        }
+
+                    }
+                })
+            })
+        }
+
+        /*
+        倒计时
+         */
+        function sendSmsRemind() {
+            var $smsBtn = $('#btnSms');
+            $smsBtn.prop('disabled', true);
+            var time = 60;
+            var remind = setInterval(function () {
+                $smsBtn.val(time + '秒重新发送');
+                time = time - 1;
+                if (time < 1) {
+                    clearInterval(remind);
+                    $smsBtn.val('点击获取验证码').prop('disabled', false);
+                }
+            }, 1000)
+        }
+    </script>
 
 {% endblock %}

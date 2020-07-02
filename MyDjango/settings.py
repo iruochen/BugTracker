@@ -106,7 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'UTC'
 
@@ -132,8 +133,8 @@ TENCENT_SMS_APP_KEY = '6666'
 TENCENT_SMS_SIGN = '小小猿若尘'
 # 短信模板
 TENCENT_SMS_TEMPLATE = {
-    'register': 642159,
-    'login': 642160,
+    'register': 666666,
+    'login': 666666,
 }
 try:
     from .local_settings import *
