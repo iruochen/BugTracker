@@ -3,24 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <!-- 引入bootstrap 使用bootcdn-->
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- 定义样式-->
     <style>
         .account {
             width: 400px;
-            margin: 0 auto;
+            margin: 0 auto;  /* 居中 */
         }
     </style>
 </head>
 <body>
+<!-- 使用account样式 -->
 <div class="account">
     <h1 style="text-align: center;">注册</h1>
     <form>
         {% for field in form %}
+            <!-- 验证码有一个输入框和一个按钮，此次使用if判断一下，对其单独处理-->
             {% if field.name == 'code' %}
+                <!-- bootstrap 表格样式 -->
                 <div class="form-group">
+                    <!-- field.label： 标题-->
+                    <!-- for 写对应字段的id， 当点击label时，字段生成的input框就可以获取到焦点-->
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    <!-- <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email"> -->
                     <div class="clearfix">
+                        <!-- ModelForm 自动生成input框 -->
                         <div class="col-md-6" style="padding-left: 0">{{ field }}</div>
                         <div class="col-md-6"><input type="button" class="btn btn-default" value="点击获取验证码"></div>
                     </div>
@@ -28,7 +35,6 @@
             {% else %}
                 <div class="form-group">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    <!-- <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email"> -->
                     {{ field }}
                 </div>
             {% endif %}

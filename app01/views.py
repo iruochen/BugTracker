@@ -26,11 +26,13 @@ from app01 import models
 from django.core.validators import RegexValidator
 
 class RegisterModelForm(forms.ModelForm):
+    # 字段重写
     # validators 中写正则表达式
     mobile_phone = forms.CharField(
         label='手机号',
         validators=[RegexValidator(r'^(1[3|4|5|6|7|8|9])\d{9}$', '手机号格式错误'), ])
     # widget 插件
+    # PasswordInput() 为密码框
     password = forms.CharField(
         label='密码', widget=forms.PasswordInput())
 
@@ -53,6 +55,7 @@ class RegisterModelForm(forms.ModelForm):
         # name： 字段名称
         # field： CharField 对象
         for name, field in self.fields.items():
+            # form-control 美化输入框
             field.widget.attrs['class'] = 'form-control'
             field.widget.attrs['placeholder'] = '请输入{}'.format(field.label,)
 
