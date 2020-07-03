@@ -1,4 +1,7 @@
+asgiref==3.2.10
 Django==1.11.7
+django-redis==4.12.1
 pytz==2020.1
 qcloudsms-py==0.1.4
 redis==3.5.3
+sqlparse==0.3.1
