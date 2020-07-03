@@ -195,3 +195,31 @@ class LoginSMSForm(BootStrapForm, forms.Form):
 
         return code
 
+class LoginForm(BootStrapForm, forms.Form):
+    username = forms.CharField(label='邮箱或手机号')
+    password = forms.CharField(label='密码', widget=forms.PasswordInput(render_value=True))
+    code = forms.CharField(label='图片验证码')
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def clean_password(self):
+        pwd = self.cleaned_data['password']
+        # 加密 & 返回
+        return encrypt.md5(pwd)
+
+    def clean_code(self):
+        """ 钩子 验证图片验证码是否正确 """
+        # 读取用户输入的验证码
+        code = self.cleaned_data['code']
+
+        # 去session中获取自己的验证码
+        session_code = self.request.session.get('image_code')
+        if not session_code:
+            raise ValidationError('验证码已过期, 请重新获取')
+
+        if code.strip().upper() != session_code.strip().upper():
+            raise ValidationError('验证码输入错误')
+
+        return code
