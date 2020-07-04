@@ -108,7 +108,7 @@
                 $.ajax({
                     url: "{% url 'send_sms' %}",  // 等价于 /send/sms/
                     type: "GET",
-                    data: {mobile_phone: mobilePhone, tpl: "login"},  // 手机号和注册的模板
+                    data: {mobile_phone: mobilePhone, tpl: "login"},  // 手机号和登录模板
                     dataType: "JSON",  // 将服务端返回的数据反序列化为字典
                     success: function (res) {
                         // ajax请求发送成功之后，自动执行的函数： res就是后端返回的值

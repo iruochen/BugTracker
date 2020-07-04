@@ -60,7 +60,7 @@ def login_sms(request):
         # print(user_object.username, user_object.email)
 
         mobile_phone = form.cleaned_data['mobile_phone']
-        # 把用户名写入session
+        # 把用户id写入session
         user_object = models.UserInfo.objects.filter(mobile_phone=mobile_phone).first()
         request.session['user_id'] = user_object.id
         request.session.set_expiry(60 * 60 * 24 * 14)
