@@ -9,6 +9,8 @@
 """
 用户账户相关功能：注册、短信、登录、注销
 """
+import uuid
+import datetime
 from io import BytesIO
 
 from django.shortcuts import render, HttpResponse, redirect
@@ -32,7 +34,24 @@ def register(request):
         # data.pop('confirm_password')
         # instance = models.UserInfo.objects.create(**data)
         # save() 等同于上述代码，会自动剔除数据库中没有的数据
-        form.save()
+        # 用户表中新建了一条数据（注册）
+        instance = form.save()
+
+        # 创建交易记录
+        # 方式一
+        policy_object = models.PricePolicy.objects.filter(category=1, title='个人免费版').first()
+        models.Transaction.objects.create(
+            status=2,
+            order=str(uuid.uuid4()),
+            user=instance,
+            price_policy=policy_object,
+            count=0,
+            price=0,
+            start_datetime=datetime.datetime.now(),
+        )
+
+        # 方式二
+
         return JsonResponse({'status': True, 'data': '/login/'})
 
     return JsonResponse({'status': False, 'error': form.errors})
