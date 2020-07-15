@@ -19,8 +19,8 @@ from web.forms.bootstrap import BootStrapForm
 from utils.tencent.sms import send_sms_single
 from utils import encrypt
 
-class RegisterModelForm(BootStrapForm, forms.ModelForm):
 
+class RegisterModelForm(BootStrapForm, forms.ModelForm):
     password = forms.CharField(
         label='密码',
         min_length=8,
@@ -29,8 +29,7 @@ class RegisterModelForm(BootStrapForm, forms.ModelForm):
             'min_length': "密码长度不能小于8个字符",
             'max_length': "密码长度不能大于64个字符"
         },
-        widget=forms.PasswordInput()
-    )
+        widget=forms.PasswordInput())
 
     confirm_password = forms.CharField(
         label='重复密码',
@@ -114,6 +113,7 @@ class RegisterModelForm(BootStrapForm, forms.ModelForm):
 
         return code
 
+
 class SendSmsForm(forms.Form):
     mobile_phone = forms.CharField(label='手机号', validators=[RegexValidator(r'^(1[3|4|5|6|7|8|9])\d{9}$', '手机号格式错误'), ])
 
@@ -153,6 +153,7 @@ class SendSmsForm(forms.Form):
         conn.set(mobile_phone, code, ex=60)
 
         return mobile_phone
+
 
 class LoginSMSForm(BootStrapForm, forms.Form):
     mobile_phone = forms.CharField(
@@ -194,6 +195,7 @@ class LoginSMSForm(BootStrapForm, forms.Form):
             raise ValidationError('验证码错误，请重新输入')
 
         return code
+
 
 class LoginForm(BootStrapForm, forms.Form):
     username = forms.CharField(label='邮箱或手机号')

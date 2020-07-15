@@ -13,6 +13,7 @@ from web.forms.bootstrap import BootStrapForm
 from web.forms.widgets import ColorRadioSelect
 from web import models
 
+
 class ProjectModelForm(BootStrapForm, forms.ModelForm):
     bootstrap_class_exclude = ['color']
 
@@ -46,4 +47,3 @@ class ProjectModelForm(BootStrapForm, forms.ModelForm):
             raise ValidationError('项目个数超限，请购买套餐')
 
         return name
-

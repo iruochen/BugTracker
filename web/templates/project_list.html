@@ -148,7 +148,7 @@
                            style="background-color: {{ item.get_color_display }};">{{ item.name }}</a>
                         <div class="info">
                             <div>
-                                <a href={% url 'project_star' project_type='join' project_id=item.id %}>
+                                <a href="{% url 'project_star' project_type='join' project_id=item.id %}">
                                     <i class="fa fa-star" aria-hidden="true" style="color: #d5d5d5"></i>
                                 </a>
                                 <span>{{ item.creator.username }}</span>
@@ -188,8 +188,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button id="btnSubmit" type="button" class="btn btn-primary">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                    <button id="btnSubmit" type="button" class="btn btn-primary">确 定</button>
                 </div>
             </div>
         </div>
@@ -207,9 +207,9 @@
 
                 $.ajax({
                     url: "{% url 'project_list' %}",
-                    type: 'POST',
+                    type: "POST",
                     data: $('#addForm').serialize(),
-                    dataType: 'JSON',
+                    dataType: "JSON",
                     success: function (res) {
                         console.log(res);
                         if (res.status) {
