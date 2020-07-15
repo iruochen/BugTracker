@@ -10,16 +10,19 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from web.forms.bootstrap import BootStrapForm
+from web.forms.widgets import ColorRadioSelect
 from web import models
 
 class ProjectModelForm(BootStrapForm, forms.ModelForm):
-    # desc = forms.CharField(widget=forms.Textarea())
+    bootstrap_class_exclude = ['color']
 
+    # desc = forms.CharField(widget=forms.Textarea())
     class Meta:
         model = models.Project
         fields = ['name', 'color', 'desc']
         widgets = {
-            'desc': forms.Textarea
+            'desc': forms.Textarea,
+            'color': ColorRadioSelect(attrs={'class': 'color-radio'})
         }
 
     def __init__(self, request, *args, **kwargs):
