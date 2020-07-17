@@ -21,5 +21,5 @@ draw = ImageDraw.Draw(img, mode='RGB')
 draw.text([0, 0], 'python', "red")
 
 # 保存到本地
-with open('code.png', 'wb') as f:
+with open('../code.png', 'wb') as f:
     img.save(f, format='png')

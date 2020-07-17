@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class UserInfo(models.Model):
     username = models.CharField(verbose_name='用户名', max_length=32, db_index=True)  # db_index=True 索引
     email = models.EmailField(verbose_name='邮箱', max_length=32)
@@ -7,6 +8,7 @@ class UserInfo(models.Model):
     password = models.CharField(verbose_name='密码', max_length=32)
 
     # price_policy = models.ForeignKey(verbose_name='价格策略', to='PricePolicy', null=True, blank=True)
+
 
 class PricePolicy(models.Model):
     """ 价格策略 """
@@ -25,6 +27,7 @@ class PricePolicy(models.Model):
     per_file_size = models.PositiveIntegerField(verbose_name='单文件大小')
 
     create_datetime = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
+
 
 class Transaction(models.Model):
     """ 交易记录 """
@@ -50,6 +53,7 @@ class Transaction(models.Model):
 
     create_datetime = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
 
+
 class Project(models.Model):
     """ 项目表 """
     COLOR_CHOICES = (
@@ -72,12 +76,16 @@ class Project(models.Model):
     creator = models.ForeignKey(verbose_name='创建者', to='UserInfo')
     create_datetime = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
 
+    bucket = models.CharField(verbose_name='COS桶', max_length=128)
+    region = models.CharField(verbose_name='COS区域', max_length=32)
+
     # 查询：可以省事
     # 增加、删除、修改：无法完成
     # through='ProjectUser' 自动关联表 ProjectUser，不会新建表
     # through_fields： 关联字段through='ProjectUser'
     # 项目和用户是多对多的关系
     # project_user = models.ManyToManyField(to='UserInfo', through='ProjectUser', through_fields=('project', 'user'))
+
 
 class ProjectUser(models.Model):
     """ 项目参与者 """
@@ -87,10 +95,16 @@ class ProjectUser(models.Model):
 
     create_datetime = models.DateTimeField(verbose_name='加入时间', auto_now_add=True)
 
+
 class Wiki(models.Model):
     project = models.ForeignKey(verbose_name='项目', to='Project')
     title = models.CharField(verbose_name='标题', max_length=32)
     content = models.TextField(verbose_name='内容')
 
+    depth = models.IntegerField(verbose_name='深度', default=1)
+
     # 自关联
     parent = models.ForeignKey(verbose_name='父文章', to='Wiki', null=True, blank=True, related_name='children')
+
+    def __str__(self):
+        return self.title
