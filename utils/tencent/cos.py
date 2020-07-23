@@ -21,8 +21,7 @@ def create_bucket(bucket, region="ap-nanjing"):
 
     config = CosConfig(Region=region, SecretId=settings.TENCENT_COS_ID, SecretKey=settings.TENCENT_COS_KEY)
     client = CosS3Client(config)
-
-    response = client.create_bucket(
+    client.create_bucket(
         Bucket=bucket,
         ACL='public-read',  # private / public-read / public-read-wirte
     )

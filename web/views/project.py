@@ -56,11 +56,11 @@ def project_list(request):
         region = 'ap-nanjing'
         create_bucket(bucket, region)
 
+        # 2. 创建项目
         # 验证通过: 项目名、颜色、描述 + creator
         form.instance.region = region
         form.instance.bucket = bucket
         form.instance.creator = request.tracer.user
-        # 创建项目
         form.save()
         return JsonResponse({'status': True})
 
