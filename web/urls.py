@@ -44,6 +44,7 @@ urlpatterns = [
         url(r'^wiki/upload/$', wiki.wiki_upload, name='wiki_upload'),
 
         url(r'^file/$', file.file, name='file'),
+        url(r'^file/delete/$', file.file_delete, name='file_delete'),
 
         url(r'^setting/$', manage.setting, name='setting'),
     ], None, None)),
