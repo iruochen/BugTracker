@@ -144,6 +144,9 @@ class Module(models.Model):
 
 class IssuesType(models.Model):
     """ 问题类型 例如： 任务、功能、Bug """
+
+    PROJECT_INIT_LIST = ['任务', '功能', 'Bug']
+
     title = models.CharField(verbose_name='类型名称', max_length=32)
     project = models.ForeignKey(verbose_name='项目', to='Project')
 
@@ -196,3 +199,20 @@ class Issues(models.Model):
 
     def __str__(self):
         return self.subject
+
+
+class IssuesReply(models.Model):
+    """ 问题回复 """
+
+    reply_type_choices = (
+        (1, '修改记录'),
+        (2, '回复'),
+    )
+    reply_type = models.IntegerField(verbose_name='类型', choices=reply_type_choices)
+
+    issues = models.ForeignKey(verbose_name='问题', to='Issues')
+    content = models.TextField(verbose_name='描述')
+    creator = models.ForeignKey(verbose_name='创建者', to='UserInfo', related_name='create_reply')
+    create_datetime = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
+
+    reply = models.ForeignKey(verbose_name='回复', to='self', null=True, blank=True)

@@ -1,146 +1,74 @@
 {% extends 'layout/manage.html' %}
 {% load static %}
-{% load issues %}
-
 {% block css %}
     <link rel="stylesheet" href="{% static 'plugin/editor-md/css/editormd.min.css' %}">
     <link rel="stylesheet" href="{% static 'plugin/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
     <link rel="stylesheet" href="{% static 'plugin/bootstrap-select/css/bootstrap-select.min.css' %}">
-
     <style>
-        .issues-list .number {
-            width: 100px;
-            text-align: right;
+        .comment-area .item {
+            margin-top: 20px;
         }
 
-        .issues-list .number a {
-            font-weight: 500;
-            padding: 0 10px;
-        }
-
-        .issues-list .issue .tags {
-            padding: 10px 0;
-        }
-
-        .issues-list .issue .tags span {
-            margin-right: 20px;
+        .comment-area .left-avatar {
+            float: left;
+            margin-right: 10px;
             display: inline-block;
-            font-size: 12px;
-        }
-
-        .issues-list .issue .tags .type {
+            width: 30px;
+            height: 30px;
+            background-color: #304659;
             color: white;
-            padding: 1px 5px;
-            border-radius: 5px;
-            background-color: #dddddd;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
         }
 
-        .editormd {
-            margin-bottom: 0;
+        .comment-area .right-info {
+            padding-left: 35px;
+        }
+
+        .comment-area .right-info .desc .msg {
+            display: inline-block;
+            padding-right: 20px;
+            color: #8c8c8c;
+        }
+
+        .comment-area .child {
+            padding-left: 55px;
+        }
+
+        .comment-area .error-msg {
+            color: red;
+        }
+
+        .comment-area .reply-user {
+            display: inline-block;
+            background-color: #ddd;
+            color: black;
+            padding: 6px 8px;
+            margin-left: 20px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
         .editormd-fullscreen {
             z-index: 1001;
-        }
-
-        .pd-0 {
-            padding: 0 !important;
         }
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="container-fluid clearfix" style="padding: 20px 0;">
-        <div class="col-sm-3">
+
+        <div class="col-sm-7">
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    <i class="fa fa-search" aria-hidden="true"></i> 筛选
+                <div class="panel-heading edit-heading">
+                    <div>
+                        <i class="fa fa-edit" aria-hidden="true"></i> 更新问题
+                    </div>
+
                 </div>
                 <div class="panel-body">
-                    筛选选项
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-9">
-            <div class="panel panel-default">
-                <!-- Default panel contents -->
-                <div class="panel-heading">
-                    <i class="fa fa-quora" aria-hidden="true"></i> 问题
-                </div>
-                <div class="panel-body">
-                    <a class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">新建问题</a>
-                    <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#inviteModal">邀请成员</a>
-                </div>
-                <table class="table">
-                    <tbody class="issues-list">
-                    {% for item in issues_object_list %}
-                        <tr>
-                            <td class="number">
-                                <i class="fa fa-circle text-{{ item.priority }}"></i>
-                                <a target="_blank"
-                                   href="{% url 'issues_detail' project_id=request.tracer.project.id issues_id=item.id %}">{% string_just item.id %}</a>
-                            </td>
-                            <td class="issue">
-                                <div>
-                                    <a target="_blank"
-                                       href="{% url 'issues_detail' project_id=request.tracer.project.id issues_id=item.id %}">{{ item.subject }}</a>
-                                </div>
-                                <div class="tags">
-                                    <span class="type">
-                                    {{ item.issues_type.title }}
-                                    </span>
-                                    <span>
-                                    <i class="fa fa-refresh" aria-hidden="true"></i>
-                                        {{ item.get_status_display }}
-                                    </span>
-                                    {% if item.assign %}
-                                        <span>
-                                            <i class="fa fa-hand-o-right" aria-hidden="true"></i>
-                                            {{ item.assign.username }}
-                                        </span>
-                                    {% endif %}
-                                    <span>
-                                    <i class="fa fa-user-o" aria-hidden="true"></i>
-                                        {{ item.creator.username }}
-                                    </span>
-                                    {% if item.end_date %}
-                                        <span><i class="fa fa-calendar" aria-hidden="true"></i>
-                                            {{ item.end_date }} 截至
-                                        </span>
-                                    {% endif %}
-                                    <span><i class="fa fa-clock-o" aria-hidden="true"></i>
-                                        {{ item.latest_update_datetime }} 更新
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-
-                    </tbody>
-                </table>
-            </div>
-            <div class="panel panel-default"></div>
-            <nav aria-label="...">
-                <ul class="pagination" style="margin-top: 0">
-                    {{ page_html|safe }}
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-    <div id="addModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
-         aria-labelledby="myLargeModalLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">
-                    &times;</span></button>
-                    <h4 class="modal-title">新建问题</h4>
-                </div>
-                <div class="modal-body" style="padding-right: 40px;">
-
-                    <form id="addForm" class="form-horizontal">
+                    <form id="editForm" class="form-horizontal" method="post">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="{{ form.issues_type.id_for_label }}"
@@ -189,11 +117,13 @@
                                     <div id="editor">
                                         {{ form.desc }}
                                     </div>
+
                                     <div class="error-msg"></div>
                                 </div>
                                 <div class="error-msg"></div>
                             </div>
                         </div>
+
                         <div class="form-group clearfix">
 
                             <div class="col-md-6 pd-0">
@@ -219,6 +149,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="form-group clearfix">
                             <div class="col-md-6 pd-0">
                                 <label for="inputPassword3" class="col-md-4 control-label">指派给</label>
@@ -238,6 +169,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="form-group clearfix">
                             <div class="col-md-6 pd-0">
                                 <label for="inputPassword3" class="col-md-4 control-label">开始时间</label>
@@ -289,12 +221,74 @@
                                 </div>
                             </div>
                         </div>
+
+
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
-                    <button id="btnAddSubmit" type="button" class="btn btn-primary">添 加</button>
+            </div>
+        </div>
+
+        <div class="col-sm-5">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-search" aria-hidden="true"></i> 操作记录
                 </div>
+                <div class="panel-body comment-area">
+
+                    <div class="comment-list">
+
+                    </div>
+
+                    <hr/>
+                    <div class="comment-text" id="commentText">
+
+                        <div class="form-group">
+                            <textarea id="content" rows="6" class="form-control"
+                                      placeholder="请输入要回复的内容"></textarea>
+                            <span class="error-msg"></span>
+                        </div>
+
+                        <input class="btn btn-primary" type="button" id="btnSubmit" value="提 交">
+                        <div class="reply-user hide" id="replyUser">
+                            回复 <span></span>
+                            <i class="fa fa-times-circle" aria-hidden="true" style="color: #9d9d9d;"></i>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="hide" id="recordTemplate">
+        <div class="item clearfix">
+            <div class="left-avatar"></div>
+            <div class="right-info">
+                <pre></pre>
+                <div class="desc">
+                    <div class="msg">
+                        <i class="fa fa-bullhorn" aria-hidden="true"></i>
+                        <span class="type"></span>
+                    </div>
+                    <div class="msg">
+                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                        <span class="user"></span>
+                    </div>
+                    <div class="msg">
+                        <i class="fa fa-clock-o" aria-hidden="true"></i>
+                        <span class="date"></span>
+                    </div>
+
+                    <a href="#commentText" class="reply">
+                        <i class="fa fa-commenting-o" aria-hidden="true"></i> 回复
+                    </a>
+
+                </div>
+            </div>
+            <div class="child">
+
             </div>
         </div>
     </div>
@@ -306,14 +300,18 @@
     <script src="{% static 'plugin/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
     <script src="{% static 'plugin/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
     <script src="{% static 'plugin/bootstrap-select/js/i18n/defaults-zh_CN.min.js' %}"></script>
+
     <script>
         var WIKI_UPLOAD_URL = "{% url 'wiki_upload' project_id=request.tracer.project.id %}";
-        var POST_ISSUES = "{% url 'issues' project_id=request.tracer.project.id %}";
+        var ISSUES_RECORD_API = "{% url 'issues_record' project_id=request.tracer.project.id issues_id=issues_object.id %}";
 
         $(function () {
-            bindBootStrapShownEvent();
             initDatePicker();
-            bindAddSubmit();
+            initEditorMd();
+            initIssuesRecord();
+            bindReply();
+            bindCancelReplyUser();
+            bindSubmit();
         });
 
         /*
@@ -328,13 +326,6 @@
             });
         }
 
-        function bindBootStrapShownEvent() {
-            $('#addModal').on('shown.bs.modal', function (event) {
-                // 对话框弹出时，内容触发
-                initEditorMd();
-            });
-        }
-
         /*
         初始化markdown编辑器（textarea转换为编辑器）
          */
@@ -345,30 +336,116 @@
                 path: "{% static 'plugin/editor-md/lib/' %}",
                 imageUpload: true,
                 imageFormats: ["jpg", "jpeg", "png", "gif"],
-                imageUploadURL: WIKI_UPLOAD_URL
+                imageUploadURL: WIKI_UPLOAD_URL,
+                toolbarAutoFixed: false,
+                // 指定显示
+                toolbarIcons: function () {
+                    return ["bold", "hr", "del", "italic", "quote", "|", "image", "preview", "watch", "fullscreen", "||", "save"]
+                },
+                // 自定义
+                toolbarCustomIcons: {
+                    save: "<input type='button' value='保 存' class='btn btn-success btn-sm' onclick='saveDesc();' />"
+                },
+                // 默认预览模式
+                onload: function () {
+                    this.previewing();
+                }
             });
         }
 
-        function bindAddSubmit() {
-            $('#btnAddSubmit').click(function () {
-                $("#addForm").find('.error-msg').empty();
+        function saveDesc() {
+            alert('保存成功');
+        }
+
+        /*
+        问题评论初始化
+         */
+        function initIssuesRecord() {
+            $.ajax({
+                url: ISSUES_RECORD_API,
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (res) {
+                    if (res.status) {
+                        $.each(res.data, function (index, item) {
+                            createRecordNode(item);
+                        })
+                    } else {
+
+                    }
+                }
+            })
+        }
+
+        /*
+        创建操作记录节点
+         */
+        function createRecordNode(nodeDict) {
+            var $item = $("#recordTemplate").find('.item').clone();
+            $item.find('.left-avatar').html(nodeDict.creator[0].toUpperCase());
+            $item.find('pre').html(nodeDict.content);
+            $item.find('.user').html(nodeDict.creator);
+            $item.find('.type').html(nodeDict.reply_type_text);
+            $item.find('.date').html(nodeDict.datetime);
+            $item.attr({id: nodeDict.id, username: nodeDict.creator});
+
+            if (nodeDict.parent_id) {
+                // 挂在谁下
+                $('#' + nodeDict.parent_id).children('.child').append($item);
+            } else {
+                // 根下
+                $('.comment-list').append($item);
+            }
+        }
+
+        /*
+        回复问题
+         */
+        function bindReply() {
+            $('.comment-list').on('click', '.reply', function () {
+                var $item = $(this).parent().parent().parent();
+                var id = $item.attr('id');
+                var username = $item.attr('username');
+                $('#replyUser').removeClass('hide').attr('parent-id', id).children('span').text(username);
+            })
+        }
+
+        /*
+        取消回复
+         */
+        function bindCancelReplyUser() {
+            $('#replyUser').click(function () {
+                $(this).addClass('hide').removeAttr('parent-id').children('span').text("");
+            })
+        }
+
+        /*
+        点击评论
+         */
+        function bindSubmit() {
+            $('#btnSubmit').click(function () {
+                $('#commentText .error-msg').text('');
                 $.ajax({
-                    url: POST_ISSUES,
+                    url: ISSUES_RECORD_API,
                     type: 'POST',
-                    data: $('#addForm').serialize(),
+                    data: {content: $('#content').val(), reply: $('#replyUser').attr('parent-id')},
                     dataType: 'JSON',
                     success: function (res) {
                         if (res.status) {
-                            location.href = location.href;
+                            // 添加节点
+                            createRecordNode(res.data);
+                            // 输入的内容清空
+                            $('#content').val('');
+                            $('#replyUser').addClass('hide').removeAttr('parent-id').children('span').text('');
                         } else {
-                            // 错误信息
                             $.each(res.error, function (k, v) {
-                                $('#id_' + k).parent().next('.error-msg').text(v[0]);
+                                $('#content').next('.error-msg').text(v[0]);
                             })
+
                         }
                     }
                 })
-            });
+            })
         }
     </script>
 {% endblock %}
