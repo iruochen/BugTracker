@@ -46,6 +46,35 @@
         .pd-0 {
             padding: 0 !important;
         }
+
+        /* 筛选 */
+        .filter-area .item {
+            margin-bottom: 15px;
+        }
+
+        .filter-area .item .title {
+            padding: 5px 0;
+        }
+
+        .filter-area .item .check-list a {
+            text-decoration: none;
+            display: inline-block;
+            min-width: 65px;
+        }
+
+        .filter-area .item .check-list label {
+            font-weight: 200;
+            font-size: 13px;
+            margin-left: 3px;
+        }
+
+        .filter-area .item .check-list a:hover {
+            font-weight: 300;
+        }
+
+        .filter-area .item .check-list .cell {
+            margin-right: 10px;
+        }
     </style>
 {% endblock %}
 
@@ -56,8 +85,23 @@
                 <div class="panel-heading">
                     <i class="fa fa-search" aria-hidden="true"></i> 筛选
                 </div>
-                <div class="panel-body">
-                    筛选选项
+                <div class="panel-body filter-area">
+                    <div class="item">
+                        <div class="title">状态</div>
+                        <div class="check-list">
+                            {% for item in status_filter %}
+                                {{ item }}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="title">优先级</div>
+                        <div class="check-list">
+                            {% for item in priority_filter %}
+                                {{ item }}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -314,7 +358,18 @@
             bindBootStrapShownEvent();
             initDatePicker();
             bindAddSubmit();
+
+            bindClickCheckFilter();
         });
+
+        /*
+        点击筛选的checkbox
+        */
+        function bindClickCheckFilter() {
+            $('.filter-area').find(':checkbox').click(function () {
+                location.href = $(this).parent().attr('href');
+            });
+        }
 
         /*
         添加对话框： 初始化时间选择
