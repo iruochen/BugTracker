@@ -55,10 +55,46 @@ class CheckFilter(object):
             yield mark_safe(html)
 
 
+class SelectFilter(object):
+    def __init__(self, name, data_list, request):
+        self.name = name
+        self.data_list = data_list
+        self.request = request
+
+    def __iter__(self):
+        yield mark_safe("<select class='select2' multiple='multiple' style='width:100%;'>")
+        for item in self.data_list:
+            key = str(item[0])
+            text = item[1]
+
+            selected = ''
+            value_list = self.request.GET.getlist(self.name)
+            if key in value_list:
+                selected = 'selected'
+                value_list.remove(key)
+            else:
+                value_list.append(key)
+
+            query_dict = self.request.GET.copy()
+            query_dict._mutable = True
+            query_dict.setlist(self.name, value_list)
+            if 'page' in query_dict:
+                query_dict.pop('page')
+            param_url = query_dict.urlencode()
+            if param_url:
+                url = '{}?{}'.format(self.request.path_info, param_url)
+            else:
+                url = self.request.path_info
+
+            html = "<option value='{url}' {selected}>{text}</option>".format(url=url, selected=selected, text=text)
+            yield mark_safe(html)
+        yield mark_safe("</select>")
+
+
 def issues(request, project_id):
     if request.method == 'GET':
         # 根据URL做筛选， 筛选条件（根据用户通过GET传过来的参数实现）
-        allow_filter_name = ['issues_type', 'status', 'priority']
+        allow_filter_name = ['issues_type', 'status', 'priority', 'assign', 'attention']
         condition = {}
         for name in allow_filter_name:
             value_list = request.GET.getlist(name)
@@ -84,12 +120,23 @@ def issues(request, project_id):
         issues_object_list = queryset[page_object.start:page_object.end]
 
         form = IssuesModelForm(request)
+        project_issues_type = models.IssuesType.objects.filter(project_id=project_id).values_list('id', 'title')
+
+        project_total_user = [(request.tracer.project.creator_id, request.tracer.project.creator.username)]
+        join_user = models.ProjectUser.objects.filter(project_id=project_id).values_list('user_id', 'user__username')
+        project_total_user.extend(join_user)
+
         context = {
             'form': form,
             'issues_object_list': issues_object_list,
             'page_html': page_object.page_html(),
-            'status_filter': CheckFilter('status', models.Issues.status_choices, request),
-            'priority_filter': CheckFilter('priority', models.Issues.priority_choices, request)
+            'filter_list': [
+                {'title': '问题类型', 'filter': CheckFilter('issues_type', project_issues_type, request)},
+                {'title': '状态', 'filter': CheckFilter('status', models.Issues.status_choices, request)},
+                {'title': '优先级', 'filter': CheckFilter('priority', models.Issues.priority_choices, request)},
+                {'title': '指派者', 'filter': SelectFilter('assign', project_total_user, request)},
+                {'title': '关注者', 'filter': SelectFilter('attention', project_total_user, request)},
+            ],
         }
         return render(request, 'issues.html', context)
 

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{% static 'plugin/editor-md/css/editormd.min.css' %}">
     <link rel="stylesheet" href="{% static 'plugin/bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
     <link rel="stylesheet" href="{% static 'plugin/bootstrap-select/css/bootstrap-select.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugin/select2/css/select2.min.css' %}">
 
     <style>
         .issues-list .number {
@@ -86,22 +87,16 @@
                     <i class="fa fa-search" aria-hidden="true"></i> 筛选
                 </div>
                 <div class="panel-body filter-area">
-                    <div class="item">
-                        <div class="title">状态</div>
-                        <div class="check-list">
-                            {% for item in status_filter %}
-                                {{ item }}
-                            {% endfor %}
+                    {% for row in filter_list %}
+                        <div class="item">
+                            <div class="title">{{ row.title }}</div>
+                            <div class="check-list">
+                                {% for item in row.filter %}
+                                    {{ item }}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
-                    <div class="item">
-                        <div class="title">优先级</div>
-                        <div class="check-list">
-                            {% for item in priority_filter %}
-                                {{ item }}
-                            {% endfor %}
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -350,6 +345,9 @@
     <script src="{% static 'plugin/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js' %}"></script>
     <script src="{% static 'plugin/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
     <script src="{% static 'plugin/bootstrap-select/js/i18n/defaults-zh_CN.min.js' %}"></script>
+    <script src="{% static 'plugin/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'plugin/select2/js/i18n/zh-CN.js' %}"></script>
+
     <script>
         var WIKI_UPLOAD_URL = "{% url 'wiki_upload' project_id=request.tracer.project.id %}";
         var POST_ISSUES = "{% url 'issues' project_id=request.tracer.project.id %}";
@@ -360,7 +358,19 @@
             bindAddSubmit();
 
             bindClickCheckFilter();
+
+            initSelect2();
         });
+
+        function initSelect2() {
+            $('.select2').select2({}).on('select2:select', function (e) {
+                // 选中某一项时触发
+                location.href = e.params.data.id;
+            }).on('select2:unselect', function (e) {
+                // 移除某一项触发
+                location.href = e.params.data.id;
+            });
+        }
 
         /*
         点击筛选的checkbox
