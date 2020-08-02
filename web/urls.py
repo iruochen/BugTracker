@@ -57,7 +57,9 @@ urlpatterns = [
         url(r'^issues/detail/(?P<issues_id>\d+)/$', issues.issues_detail, name='issues_detail'),
         url(r'^issues/record/(?P<issues_id>\d+)/$', issues.issues_record, name='issues_record'),
         url(r'^issues/change/(?P<issues_id>\d+)/$', issues.issues_change, name='issues_change'),
+        url(r'^issues/invite/url/$', issues.invite_url, name='invite_url'),
     ], None, None)),
 
+    url(r'^issues/invite/join/(?P<code>\w+)$', issues.invite_join, name='invite_join'),
     url(r'^$', home.index),
 ]
