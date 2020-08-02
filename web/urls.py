@@ -10,12 +10,12 @@ from django.conf.urls import url, include
 from web.views import account
 from web.views import home
 from web.views import project
-from web.views import manage
 from web.views import wiki
 from web.views import file
 from web.views import setting
 from web.views import issues
 from web.views import dashboard
+from web.views import statistics
 
 urlpatterns = [
     url(r'^register/$', account.register, name='register'),
@@ -35,8 +35,6 @@ urlpatterns = [
 
     # 项目管理
     url(r'^manage/(?P<project_id>\d+)/', include([
-        url(r'^statistics/$', manage.statistics, name='statistics'),
-
         url(r'^wiki/$', wiki.wiki, name='wiki'),
         url(r'^wiki/add/$', wiki.wiki_add, name='wiki_add'),
         url(r'^wiki/catalog/$', wiki.wiki_catalog, name='wiki_catalog'),
@@ -61,6 +59,8 @@ urlpatterns = [
 
         url(r'^dashboard/$', dashboard.dashboard, name='dashboard'),
         url(r'^dashboard/issues/chart/$', dashboard.issues_chart, name='issues_chart'),
+
+        url(r'^statistics/$', statistics.statistics, name='statistics'),
     ], None, None)),
 
     url(r'^issues/invite/join/(?P<code>\w+)$', issues.invite_join, name='invite_join'),
