@@ -15,6 +15,7 @@ from web.views import wiki
 from web.views import file
 from web.views import setting
 from web.views import issues
+from web.views import dashboard
 
 urlpatterns = [
     url(r'^register/$', account.register, name='register'),
@@ -34,7 +35,6 @@ urlpatterns = [
 
     # 项目管理
     url(r'^manage/(?P<project_id>\d+)/', include([
-        url(r'^dashboard/$', manage.dashboard, name='dashboard'),
         url(r'^statistics/$', manage.statistics, name='statistics'),
 
         url(r'^wiki/$', wiki.wiki, name='wiki'),
@@ -58,6 +58,9 @@ urlpatterns = [
         url(r'^issues/record/(?P<issues_id>\d+)/$', issues.issues_record, name='issues_record'),
         url(r'^issues/change/(?P<issues_id>\d+)/$', issues.issues_change, name='issues_change'),
         url(r'^issues/invite/url/$', issues.invite_url, name='invite_url'),
+
+        url(r'^dashboard/$', dashboard.dashboard, name='dashboard'),
+        url(r'^dashboard/issues/chart/$', dashboard.issues_chart, name='issues_chart'),
     ], None, None)),
 
     url(r'^issues/invite/join/(?P<code>\w+)$', issues.invite_join, name='invite_join'),
