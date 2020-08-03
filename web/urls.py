@@ -61,6 +61,8 @@ urlpatterns = [
         url(r'^dashboard/issues/chart/$', dashboard.issues_chart, name='issues_chart'),
 
         url(r'^statistics/$', statistics.statistics, name='statistics'),
+        url(r'^statistics/priority/$', statistics.statistics_priority, name='statistics_priority'),
+        url(r'^statistics/project/user/$', statistics.statistics_project_user, name='statistics_project_user'),
     ], None, None)),
 
     url(r'^issues/invite/join/(?P<code>\w+)$', issues.invite_join, name='invite_join'),
