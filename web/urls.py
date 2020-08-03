@@ -26,6 +26,12 @@ urlpatterns = [
     url(r'^index/$', home.index, name='index'),
 
     url(r'^logout/$', account.logout, name='logout'),
+
+    url(r'^price/$', home.price, name='price'),
+    url(r'^payment/(?P<policy_id>\d+)$', home.payment, name='payment'),
+    url(r'^pay/$', home.pay, name='pay'),
+    url(r'^pay/notify/$', home.pay_notify, name='pay_notify'),
+
     # 项目列表
     url(r'^project/list/$', project.project_list, name='project_list'),
     # /project/star/my/1

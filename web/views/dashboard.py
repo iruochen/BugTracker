@@ -47,7 +47,6 @@ def issues_chart(request, project_id):
     """ 概览页面生成highcharts所需的数据 """
     # 最近30天，每天创建的问题数量
 
-
     today = datetime.datetime.now().date()
     """
     {
