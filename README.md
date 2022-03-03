@@ -1,3 +1,4 @@
-# BugTracker
+<center># BugTracker</center>
 ---
-web 项目管理系统
+<center>web 项目管理系统</center>
+
